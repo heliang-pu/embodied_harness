@@ -1,0 +1,7 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+# Episode traces (trace.root) and data exports, written under the directory you run from.
+/runs/
+/exports/

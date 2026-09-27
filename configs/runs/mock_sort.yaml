@@ -1,0 +1,27 @@
+# M0 closed loop: symbolic sorting world + mock VLA + oracle planner. No model, no robot.
+name: mock_sort
+task: ../tasks/sort_by_size.yaml
+skills: ../skills/sorting.yaml
+env:
+  type: mock_sorting
+  params:
+    num_packages: 10
+    barcode_down_prob: 0.3
+    fault_probs:
+      pick_next: {empty_grasp: 0.1}
+      flip: {dropped: 0.1}
+executor:
+  type: mock
+  library: ../libraries/mock_sort_v1.yaml
+  handoff: finish_chunk
+  params: {chunk_size: 5}
+planner:
+  type: mock_oracle
+  params:
+    size_to_bin: {small: A, medium: B, large: C}
+runtime:
+  clock: sim
+  control_hz: 10
+  primitive_steps: {retract: 5}
+trace:
+  root: runs

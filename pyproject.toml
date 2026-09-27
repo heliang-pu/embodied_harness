@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fmc3-harness"
+version = "0.1.0"
+description = "Runtime harness that runs a fine-tuned VLM planner and a VLA executor as one closed loop."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.6",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+# The VLM planner encodes camera images before sending them to vLLM.
+planner = [
+    "numpy>=1.24",
+    "pillow>=10",
+]
+# Exporting lerobot-annotate datasets. Decoding video frames also needs the `lerobot` package.
+data = [
+    "fmc3-harness[planner]",
+    "pyarrow>=14",
+]
+dev = [
+    "fmc3-harness[data]",
+    "pytest>=8",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+fmc3-harness = "fmc3_harness.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+# Chinese full-width punctuation in sample strings and comments is intended.
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

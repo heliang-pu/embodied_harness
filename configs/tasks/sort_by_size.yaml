@@ -1,0 +1,11 @@
+task:
+  id: sort_by_size
+  goal: 把桌上所有包裹按尺寸分拣：小的放 A，中的放 B，大的放 C
+  rules:
+    - 条码朝下的包裹先翻面再放
+  skills: [pick, flip, place, retract]
+  expected_total: 10
+  ledger:
+    sorted: {type: counter, keys: [A, B, C]}
+  done_when: "sum(ledger.sorted) == task.expected_total"
+  budget: {max_time_s: 900, max_skill_calls: 80, max_planner_calls: 120}

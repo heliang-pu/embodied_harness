@@ -1,0 +1,44 @@
+# Skill vocabulary for parcel sorting (design doc §4). Skills only reference prompt ids;
+# the texts live in the executor's prompt library.
+version: 1
+library: mock_sort_v1
+predicates:                                   # computed from proprio on every tick
+  holding: "0.01 < gripper_width < 0.08"
+  empty_grasp: "gripper_closed and gripper_width <= 0.01"
+  released: "gripper_width > 0.08"
+skills:
+  pick:
+    prompt: pick_next
+    preconditions: ["not holding"]
+    verify:
+      success: [{when: holding, hold_s: 0.5}]
+      failure: [{when: empty_grasp, hold_s: 0.3}]            # the reason defaults to the predicate name
+    on_failure:
+      empty_grasp: {retry: 2, before_retry: [retract]}       # design doc §13
+      timeout: {escalate: planner}
+  flip:
+    prompt: flip
+    preconditions: ["holding"]
+    min_duration_s: 4                                        # no visual check in v1: 4 s and still holding
+    verify:
+      success: [{when: holding}]
+      failure: [{reason: dropped, when: "not holding", hold_s: 0.3}]
+    on_failure:
+      dropped: {escalate: planner}
+  place:
+    args:
+      bin: {type: enum, values: [A, B, C]}
+    prompt: {A: place_bin_a, B: place_bin_b, C: place_bin_c}
+    preconditions: ["holding"]
+    verify:
+      success: [{when: released, hold_s: 0.3}]
+    on_failure:
+      timeout: {retry: 1}
+    effects:
+      on_success: ["ledger.sorted[args.bin] += 1"]
+  retract:
+    executor: scripted                                       # a harness primitive, not a VLA prompt
+    timeout_s: 5
+defaults:
+  on_failure: {escalate: planner}
+  max_consecutive_failures: 3

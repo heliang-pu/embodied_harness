@@ -1,0 +1,10 @@
+# How a LeRobot dataset maps onto the planner's inputs (`fmc3-harness data planner`).
+# The env adapter on the robot must compute proprio the same way, so training and deployment match.
+state_key: observation.state
+cameras:                           # planner camera (planner.params.cameras) -> dataset image key
+  head: observation.images.head
+  wrist_left: observation.images.wrist_left
+  wrist_right: observation.images.wrist_right
+proprio:                           # proprio name -> expression over the state vector `state`
+  gripper_width: "state[7]"
+  gripper_closed: "state[7] < 0.01"

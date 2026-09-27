@@ -1,0 +1,20 @@
+# Prompt library of the mock executor. A real executor ships one next to its weights
+# (design doc §4), exported from its training annotations; the texts must match word for word.
+library: mock_sort_v1
+source: hand-written for the mock sorting world
+prompts:
+  - id: pick_next
+    text: "pick up the next package"
+    duration_s: {p50: 3.0, p95: 3.5}
+  - id: flip
+    text: "flip the package over"
+    duration_s: {p50: 2.0, p95: 3.0}
+  - id: place_bin_a
+    text: "place the package into bin A"
+    duration_s: {p50: 2.5, p95: 3.0}
+  - id: place_bin_b
+    text: "place the package into bin B"
+    duration_s: {p50: 2.5, p95: 3.0}
+  - id: place_bin_c
+    text: "place the package into bin C"
+    duration_s: {p50: 2.5, p95: 3.0}
