@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository.
 
 ## What this is
 
@@ -8,7 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The harness is robot-agnostic. It has an abstract env contract and ships these envs: a symbolic mock sorting world (`env/mock_sorting.py`), a RoboMME simulator adapter, gym-aloha's bimanual ALOHA simulator (`env/aloha_sim.py`), LIBERO (`env/libero.py`) and RoboTwin 2.0 (`env/robotwin.py`, native backend in `env/robotwin_native.py`).
 
-README.md is written in Chinese and is the user-facing command reference. Module docstrings cite "design doc §N": that doc is the Claude artifact at https://claude.ai/code/artifact/539a719a-4856-4dec-a378-1c0629bf8947. Read it with the Artifact tool, not WebFetch.
+`README.md` is written in Chinese and is the user-facing command reference. Use the repository's
+[core concepts](docs/concepts.md), [configuration reference](docs/configuration.md), and
+[integration guide](docs/integration.md) for architecture, contracts, and extension points.
 
 ## Environment
 

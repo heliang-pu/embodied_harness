@@ -12,7 +12,7 @@
 模型可以随时换，这些逻辑不用跟着改。
 
 - pip 包名和命令：`embodied-harness`；import 名：`embodied_harness`
-- 设计文档：<https://claude.ai/code/artifact/539a719a-4856-4dec-a378-1c0629bf8947>
+- 项目设计：[核心概念](docs/concepts.md) · [配置参考](docs/configuration.md)
 
 ```
  相机、本体 ──► 调度器（确定性状态机）──► 规划器（VLM，vLLM 部署）：下一步 {技能, 参数, 记忆}
