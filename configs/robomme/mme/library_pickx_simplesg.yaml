@@ -1,0 +1,24 @@
+# PickXtimes subgoals that RoboMME's symbolic-simple-subgoal pi05 was trained on (its subgoal templates).
+# The policy's prompt is the episode's task goal plus one of these subgoals; see run_mme_pickx.yaml.
+library: robomme_mme_simplesg_pickx
+source: RoboMME symbolic-simple-subgoal (Yinpei/mme_vla_suite), PickXtimes subgoal templates
+prompts:
+  - {id: pick_red_1, text: "pick up the red cube for the first time"}
+  - {id: pick_red_2, text: "pick up the red cube for the second time"}
+  - {id: pick_red_3, text: "pick up the red cube for the third time"}
+  - {id: pick_red_4, text: "pick up the red cube for the fourth time"}
+  - {id: pick_red_5, text: "pick up the red cube for the fifth time"}
+  - {id: pick_green_1, text: "pick up the green cube for the first time"}
+  - {id: pick_green_2, text: "pick up the green cube for the second time"}
+  - {id: pick_green_3, text: "pick up the green cube for the third time"}
+  - {id: pick_green_4, text: "pick up the green cube for the fourth time"}
+  - {id: pick_green_5, text: "pick up the green cube for the fifth time"}
+  - {id: pick_blue_1, text: "pick up the blue cube for the first time"}
+  - {id: pick_blue_2, text: "pick up the blue cube for the second time"}
+  - {id: pick_blue_3, text: "pick up the blue cube for the third time"}
+  - {id: pick_blue_4, text: "pick up the blue cube for the fourth time"}
+  - {id: pick_blue_5, text: "pick up the blue cube for the fifth time"}
+  - {id: place_red, text: "place the red cube onto the target"}
+  - {id: place_green, text: "place the green cube onto the target"}
+  - {id: place_blue, text: "place the blue cube onto the target"}
+  - {id: press_button, text: "press the button to stop"}

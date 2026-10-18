@@ -1,0 +1,96 @@
+# Skills for composed PickXtimes tasks (env param `composite`), run by RoboMME's symbolic-simple-subgoal
+# pi05: its prompts are the subgoal texts, so each skill's one argument is the subgoal text itself.
+# The harness ends a skill from the gripper width alone: a pick once the cube has been held for 2.5 s
+# (lifted), a place once the gripper has been open for 2.5 s (retreated). Thresholds come from the 100
+# PickXtimes demos: holding a cube reads 0.0183, open 0.04, closed on nothing about 0.
+# go_home is a harness primitive: the policy was only ever trained to start a cube's first pick from the
+# episode's start pose, and right after a place it re-grasps the cube below it, whatever color it is told.
+version: 1
+library: robomme_mme_simplesg_pickx
+predicates:
+  holding: "0.012 < gripper_width < 0.03"
+  released: "gripper_width > 0.035"
+  closed_empty: "gripper_width < 0.005"
+skills:
+  pick:
+    args:
+      text:
+        type: enum
+        values:
+          - "pick up the red cube for the first time"
+          - "pick up the red cube for the second time"
+          - "pick up the red cube for the third time"
+          - "pick up the red cube for the fourth time"
+          - "pick up the red cube for the fifth time"
+          - "pick up the green cube for the first time"
+          - "pick up the green cube for the second time"
+          - "pick up the green cube for the third time"
+          - "pick up the green cube for the fourth time"
+          - "pick up the green cube for the fifth time"
+          - "pick up the blue cube for the first time"
+          - "pick up the blue cube for the second time"
+          - "pick up the blue cube for the third time"
+          - "pick up the blue cube for the fourth time"
+          - "pick up the blue cube for the fifth time"
+    prompt:
+      "pick up the red cube for the first time": pick_red_1
+      "pick up the red cube for the second time": pick_red_2
+      "pick up the red cube for the third time": pick_red_3
+      "pick up the red cube for the fourth time": pick_red_4
+      "pick up the red cube for the fifth time": pick_red_5
+      "pick up the green cube for the first time": pick_green_1
+      "pick up the green cube for the second time": pick_green_2
+      "pick up the green cube for the third time": pick_green_3
+      "pick up the green cube for the fourth time": pick_green_4
+      "pick up the green cube for the fifth time": pick_green_5
+      "pick up the blue cube for the first time": pick_blue_1
+      "pick up the blue cube for the second time": pick_blue_2
+      "pick up the blue cube for the third time": pick_blue_3
+      "pick up the blue cube for the fourth time": pick_blue_4
+      "pick up the blue cube for the fifth time": pick_blue_5
+    preconditions: ["not holding"]
+    verify:
+      success: [{when: holding, hold_s: 2.5}]
+      switch_when: [holding]
+    timeout_s: 40                      # the policy regrasps by itself after a miss; give it time
+    on_failure:
+      timeout: {escalate: planner}
+  place:
+    args:
+      text:
+        type: enum
+        values:
+          - "place the red cube onto the target"
+          - "place the green cube onto the target"
+          - "place the blue cube onto the target"
+    prompt:
+      "place the red cube onto the target": place_red
+      "place the green cube onto the target": place_green
+      "place the blue cube onto the target": place_blue
+    preconditions: ["holding"]
+    verify:
+      success: [{when: released, hold_s: 2.5}]
+      failure: [{when: closed_empty, hold_s: 0.5, reason: dropped}]
+      switch_when: [released]
+    timeout_s: 30
+    on_failure:
+      dropped: {escalate: planner}
+      timeout: {retry: 1}
+  press_button:
+    args:
+      text:
+        type: enum
+        values:
+          - "press the button to stop"
+    prompt:
+      "press the button to stop": press_button
+    preconditions: ["not holding"]
+    timeout_s: 25                      # pressing the button ends the episode in the sim
+  go_home:
+    description: back to the start pose with the gripper open, before picking a cube of another color
+    executor: scripted                 # RoboMMEEnv moves the joints back; steps in runtime.primitive_steps
+    preconditions: ["not holding"]
+    timeout_s: 10
+defaults:
+  on_failure: {escalate: planner}
+  max_consecutive_failures: 3

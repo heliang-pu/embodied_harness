@@ -1,0 +1,47 @@
+# Composed task blue_green_red: the known order of subgoals, played by the sequence planner. It measures the
+# executor and the transitions alone; the upper bound for any planner on this task. Run with
+# --seed 0 --episodes 24.
+name: composite_sequence_blue_green_red
+task: task_composite.yaml
+skills: skills_composite.yaml
+env:
+  type: robomme
+  params:
+    task: PickXtimes
+    split: test
+    difficulty: [medium, hard]             # the 24 test episodes with cubes of all three colors
+    max_steps: 1300
+    composite: [[blue, 1], [green, 1], [red, 1]]
+executor:
+  type: websocket
+  library: ../mme/library_pickx_simplesg.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {front: observation/image, wrist: observation/wrist_image}
+    state: {proprio: state, key: observation/state}
+    # The policy only hears the current subgoal, also in place of the task goal: given the composed
+    # instruction it goes for the first color it names. The planner keeps track of the whole task.
+    texts: {prompt: "{prompt}", simple_subgoal: "{prompt}", grounded_subgoal: "{prompt}"}
+    n_action_steps: 16
+    request_timeout_s: 300                 # the first call compiles the JAX model
+planner:
+  type: sequence
+  params:
+    calls:
+      - {skill: pick, args: {text: "pick up the blue cube for the first time"}}
+      - {skill: place, args: {text: "place the blue cube onto the target"}}
+      - {skill: go_home}
+      - {skill: pick, args: {text: "pick up the green cube for the first time"}}
+      - {skill: place, args: {text: "place the green cube onto the target"}}
+      - {skill: go_home}
+      - {skill: pick, args: {text: "pick up the red cube for the first time"}}
+      - {skill: place, args: {text: "place the red cube onto the target"}}
+      - {skill: press_button, args: {text: "press the button to stop"}}
+runtime:
+  clock: sim
+  control_hz: 10
+  primitive_steps: {go_home: 30}
+trace:
+  root: runs
+  video: true

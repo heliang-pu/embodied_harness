@@ -10,12 +10,12 @@ from typing import Any
 import pytest
 import yaml
 
+from embodied_harness.config.loader import Bundle, load_bundle
+from embodied_harness.env.mock_sorting import MockSortingWorld
+from embodied_harness.runtime.commands import AutoCommands, CommandSource
+from embodied_harness.runtime.factory import check_bundle
+from embodied_harness.runtime.runner import EpisodeRun, EpisodeRunner
 from fake_openai import FakeChatServer
-from fmc3_harness.config.loader import Bundle, load_bundle
-from fmc3_harness.env.mock_sorting import MockSortingWorld
-from fmc3_harness.runtime.commands import AutoCommands, CommandSource
-from fmc3_harness.runtime.factory import check_bundle
-from fmc3_harness.runtime.runner import EpisodeRun, EpisodeRunner
 
 REPO = Path(__file__).resolve().parents[1]
 CONFIGS = REPO / "configs"
@@ -74,7 +74,7 @@ def run_episode(
     world: dict[str, Any] | None = None,
     env: Any = None,
     planner: Any = None,
-    vla: Any = None,
+    policy: Any = None,
     commands: CommandSource | None = None,
     seed: int = 0,
     episode_id: str = "ep_0001",
@@ -91,7 +91,7 @@ def run_episode(
         commands=commands or AutoCommands("abort"),
         env=env,
         planner=planner,
-        vla=vla,
+        policy=policy,
         resume=resume,
         max_ticks=max_ticks,
     )

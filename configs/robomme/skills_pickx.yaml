@@ -1,0 +1,43 @@
+# PickXtimes skills. Verifiers read only the gripper width. Thresholds come from the 100 demos:
+# holding a cube reads 0.0183, open 0.04, closed on nothing about 0; a pick span ends about 3 s
+# after the gripper closes (lift) and a place span about 3 s after it opens (retreat).
+version: 1
+library: robomme_pickx_v1
+predicates:
+  holding: "0.012 < gripper_width < 0.03"
+  released: "gripper_width > 0.035"
+  closed_empty: "gripper_width < 0.005"
+skills:
+  pick:
+    args:
+      color: {type: enum, values: [red, green, blue]}
+    prompt: {red: pick_red, green: pick_green, blue: pick_blue}
+    preconditions: ["not holding"]
+    verify:
+      success: [{when: holding, hold_s: 2.5}]
+      failure: [{when: closed_empty, hold_s: 1.0, reason: empty_grasp}]
+    timeout_s: 30
+    on_failure:
+      empty_grasp: {retry: 2}
+      timeout: {escalate: planner}
+  place:
+    args:
+      color: {type: enum, values: [red, green, blue]}
+    prompt: {red: place_red, green: place_green, blue: place_blue}
+    preconditions: ["holding"]
+    verify:
+      success: [{when: released, hold_s: 2.5}]
+      failure: [{when: closed_empty, hold_s: 0.5, reason: dropped}]
+    timeout_s: 25
+    on_failure:
+      dropped: {escalate: planner}
+      timeout: {retry: 1}
+  press_button:
+    prompt: press_button
+    preconditions: ["not holding"]
+    timeout_s: 25                        # pressing the button ends the episode in the sim
+defaults:
+  on_failure: {escalate: planner}
+  # Retries count towards this cap. 4 keeps pick's two quick retries (sim runs are unattended; the episode's
+  # own step limit bounds them) and still lets the third empty grasp reach the planner before a hold.
+  max_consecutive_failures: 4

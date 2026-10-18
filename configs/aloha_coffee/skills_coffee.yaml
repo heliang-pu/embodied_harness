@@ -1,0 +1,17 @@
+# Skill vocabulary for ALOHA static coffee. Only the data tools use it so far (annotate, labels, library,
+# planner export): there is no ALOHA env adapter yet, so no verifiers are written.
+version: 1
+library: aloha_coffee_v1
+skills:
+  open_lid: {prompt: open_lid, description: open the lid of the capsule container}
+  close_lid: {prompt: close_lid, description: close the lid of the capsule container}
+  place_capsule:
+    prompt: place_capsule
+    description: put the capsule into the machine's capsule container
+    effects: {on_success: ["ledger.capsule_placed = true"]}
+  place_cup:
+    prompt: place_cup
+    description: put the cup on the center of the tray
+    effects: {on_success: ["ledger.cup_placed = true"]}
+  press_hot_water: {prompt: press_hot_water, description: press the hot water button}
+  press_travel_mug: {prompt: press_travel_mug, description: press the travel mug button}

@@ -1,0 +1,9 @@
+task:
+  id: robomme_pickxtimes
+  goal: 按指令把方块放到目标上，重复指定次数后按按钮     # each episode's instruction replaces this
+  goal_source: episode
+  rules:
+    - 每把方块放到目标上一次算一次，次数记在记忆里
+    - 次数够了再按按钮，按早了任务失败
+  skills: [pick, place, press_button]
+  budget: {max_skill_calls: 40, max_planner_calls: 80}

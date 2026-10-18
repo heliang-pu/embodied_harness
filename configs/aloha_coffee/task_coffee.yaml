@@ -1,0 +1,7 @@
+task:
+  id: aloha_coffee
+  goal: "Place the coffee capsule inside the capsule container, then place the cup onto the center of the cup tray, then push the 'Hot Water' and 'Travel Mug' buttons."
+  skills: [open_lid, place_capsule, close_lid, place_cup, press_hot_water, press_travel_mug]
+  ledger:
+    capsule_placed: {type: bool}
+    cup_placed: {type: bool}

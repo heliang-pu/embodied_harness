@@ -3,13 +3,15 @@
 import json
 import threading
 
+import pytest
+
 from conftest import make_bundle, of_type, read_events, run_episode, small_task
-from fmc3_harness.core.types import ActionChunk
-from fmc3_harness.env.mock_sorting import MockSortingWorld
-from fmc3_harness.executor.mock import MockVLAExecutor
-from fmc3_harness.planner.base import PlannerOutput
-from fmc3_harness.planner.oracle import MockSortingOracle
-from fmc3_harness.runtime.commands import ScriptedCommands
+from embodied_harness.core.types import ActionChunk
+from embodied_harness.env.mock_sorting import MockSortingWorld
+from embodied_harness.planner.base import PlannerOutput
+from embodied_harness.planner.oracle import MockSortingOracle
+from embodied_harness.policy.executor.mock import MockPolicyExecutor
+from embodied_harness.runtime.commands import ScriptedCommands
 
 
 def skills_started(events):
@@ -173,11 +175,11 @@ def test_runtime_exception_holds_with_an_internal_code(bundle, tmp_path):
 
 
 def test_executor_underrun_holds(bundle, tmp_path):
-    class Silent(MockVLAExecutor):
+    class Silent(MockPolicyExecutor):
         def infer_chunk(self, obs):
             return ActionChunk(self._version, [])
 
-    run = run_episode(bundle, tmp_path, vla=Silent(bundle.library))
+    run = run_episode(bundle, tmp_path, policy=Silent(bundle.library))
     assert run.result.error_code == "E_EXEC_UNDERRUN"
 
 
@@ -221,6 +223,35 @@ def test_done_too_early_is_checked_against_the_ledger(bundle, tmp_path):
     assert run.result.status == "done"
 
 
+class JudgingWorld(MockSortingWorld):
+    """A simulator with its own verdict in info, like RoboMME (success only once its button is pressed)."""
+
+    def __init__(self, params, success):
+        super().__init__(params)
+        self.success = success
+
+    def observe(self):
+        obs = super().observe()
+        obs.info = {**obs.info, "success": self.success}
+        return obs
+
+
+@pytest.mark.parametrize("success", [False, True])
+def test_a_done_episode_records_the_envs_own_verdict(tmp_path, success):
+    # No done_when: the planner's done ends the episode, and only the env can say whether it was right.
+    bundle = make_bundle(tmp_path, task=small_task(3, done_when=None))
+    env = JudgingWorld({"num_packages": 3, "barcode_down_prob": 0.0}, success)
+    run = run_episode(bundle, tmp_path, env=env)
+    assert run.result.status == "done" and run.result.env_success is success
+    assert json.loads((run.episode_dir / "outcome.json").read_text())["env_success"] is success
+    assert of_type(read_events(run), "episode_end")[0]["env_success"] is success
+
+
+def test_a_done_episode_without_an_env_verdict_has_none(bundle, tmp_path):
+    run = run_episode(bundle, tmp_path)  # the mock world, like a real robot, reports no success flag
+    assert run.result.status == "done" and run.result.env_success is None
+
+
 def test_planner_errors_retry_with_backoff_then_hold(bundle, tmp_path):
     class Down:
         name = "down"
@@ -256,9 +287,12 @@ def test_threaded_planner_timeout_holds(tmp_path):
 
 
 def test_threaded_planner_happy_path(tmp_path):
-    # Simulated time runs far faster than the planner thread, so give it a generous timeout.
+    # Simulated time runs far faster than the planner thread, so give it a generous timeout, and a
+    # time budget to match: a busy test process can keep the thread waiting for thousands of ticks.
     bundle = make_bundle(
-        tmp_path, task=small_task(3), run={"planner": {"threaded": True, "timeout_s": 10000}}
+        tmp_path,
+        task=small_task(3, budget={"max_time_s": 1e6}),
+        run={"planner": {"threaded": True, "timeout_s": 10000}},
     )
     assert run_episode(bundle, tmp_path).result.status == "done"
 

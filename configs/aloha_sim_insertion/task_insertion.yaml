@@ -1,0 +1,9 @@
+task:
+  id: aloha_sim_insertion
+  goal: "把插销插进插座。"
+  skills: [pick_up, insert]
+  ledger:
+    picked: {type: bool}
+    inserted: {type: bool}
+  done_when: "ledger.inserted"
+  plan: [pick_up, insert]   # the fixed order: run_insertion_plan.yaml plays it; report measures every run against it

@@ -24,14 +24,14 @@ planner:
   timeout_s: 30
   params:
     base_url: http://127.0.0.1:8000/v1
-    model: fmc3-planner                       # --served-model-name given to vllm serve
+    model: vlm-planner                       # --served-model-name given to vllm serve
     cameras: [head, wrist_left, wrist_right]  # order and resolution must match the training data
     image_size: [448, 336]
     proprio_keys: [gripper_width, gripper_closed]
     temperature: 0.0
     resample_temperature: 0.7
     structured_output: response_format
-    # api_key_env: FMC3_PLANNER_API_KEY       # if vllm serve was started with --api-key
+    # api_key_env: PLANNER_API_KEY       # if vllm serve was started with --api-key
 runtime:
   clock: sim
   control_hz: 10

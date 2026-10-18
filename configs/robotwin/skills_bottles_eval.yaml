@@ -1,0 +1,51 @@
+version: 1
+library: robotwin_bottles_objects_v2
+skills:
+  pick_bottle:
+    args:
+      bottle: {type: enum, values: [yellow, clear_blue, black_red]}
+    prompt: {yellow: pick_yellow, clear_blue: pick_clear_blue, black_red: pick_black_red}
+    description: Approach, grasp, and lift the specified bottle from the tabletop.
+    verify:
+      success: [{when: "left_gripper < 0.5 or right_gripper < 0.5", hold_s: 0.3}]
+      switch_when: ["left_gripper < 0.5 or right_gripper < 0.5"]
+    timeout_s: 45
+  handover_bottle:
+    args:
+      bottle: {type: enum, values: [yellow, clear_blue, black_red]}
+    prompt: {yellow: handover_yellow, clear_blue: handover_clear_blue, black_red: handover_black_red}
+    description: Move the specified bottle held by the right arm to the handover pose, let the left
+      gripper take it, and release the right gripper. Use only visible handovers.
+    verify:
+      success: [{when: "left_gripper < 0.5 and right_gripper > 0.5", hold_s: 0.3}]
+      switch_when: ["left_gripper < 0.5 and right_gripper > 0.5"]
+    timeout_s: 45
+  place_bottle:
+    args:
+      bottle: {type: enum, values: [yellow, clear_blue, black_red]}
+    prompt: {yellow: place_yellow, clear_blue: place_clear_blue, black_red: place_black_red}
+    description: Transport the specified bottle with the left gripper to the left-side dustbin and
+      release it inside. Assess release from the wrist images.
+    preconditions: ["ledger.disposed[args.bottle] == 0"]
+    verify:
+      success: [{when: "left_gripper > 0.5", hold_s: 0.3}]
+      switch_when: ["left_gripper > 0.5"]
+    effects:
+      on_success: ["ledger.disposed[args.bottle] = 1"]
+    timeout_s: 45
+  recover_dropped_bottle:
+    args: {}
+    prompt: recover_yellow
+    # A successful recovery closes the left gripper.  Gate another recovery on the
+    # gripper being open so periodic planner checks cannot replay it indefinitely.
+    preconditions: ["left_gripper > 0.5 and not ledger.recovered and sum(ledger.disposed) < task.expected_total"]
+    verify:
+      success: [{when: "left_gripper < 0.5", hold_s: 0.3}]
+      switch_when: ["left_gripper < 0.5"]
+    description: If the yellow bottle has fallen onto the tabletop, locate it from the camera views,
+      grasp it with the left gripper, and lift it clear of the table before placing it.
+    effects:
+      on_success: ["ledger.recovered = true"]
+    timeout_s: 45
+defaults:
+  on_failure: {escalate: planner}

@@ -1,0 +1,26 @@
+# Data tools (annotate, labels, library, planner export) for lerobot/aloha_sim_insertion_*.
+#   embodied-harness data annotate configs/aloha_sim_insertion/run_data.yaml <dataset> --out <annotated> \
+#     --vlm-api codex --vlm-model gpt-6-astra --reasoning-effort max --camera observation.images.top
+name: aloha_sim_insertion_data
+task: task_insertion.yaml
+skills: skills_insertion.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion}
+executor:
+  type: mock
+  library: library_insertion_v1.yaml
+planner:
+  type: openai_compat
+  trained_library: aloha_insertion_v1
+  params:
+    base_url: http://127.0.0.1:8021/v1
+    model: insertion-planner
+    cameras: [top]
+    image_size: [448, 336]
+    proprio_keys: [left_waist, left_shoulder, left_elbow, left_forearm_roll, left_wrist_angle,
+                   left_wrist_rotate, left_gripper, right_waist, right_shoulder, right_elbow,
+                   right_forearm_roll, right_wrist_angle, right_wrist_rotate, right_gripper]
+    show_progress: true
+    temperature: 0.0
+    request_timeout_s: 60

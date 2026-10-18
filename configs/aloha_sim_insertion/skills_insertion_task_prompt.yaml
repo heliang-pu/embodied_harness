@@ -1,0 +1,8 @@
+# One skill for the whole task; the env ends the episode when the peg is in, or at its step limit.
+version: 1
+library: aloha_insertion_task_prompt
+skills:
+  insert_peg:
+    prompt: insert_peg
+    description: pick up the socket and the peg and insert the peg into the socket
+    timeout_s: 30

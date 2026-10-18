@@ -34,6 +34,7 @@ EPISODES: dict[int, dict[str, Any]] = {
     2: {"frames": 10, "subtasks": [], "memories": []},  # never annotated
 }
 FILES = {"data/chunk-000/file-000.parquet": [0, 1], "data/chunk-000/file-001.parquet": [2]}
+INSTRUCTIONS = {0: "sort package 1 into bin A", 1: "sort package 2 into bin C", 2: "do nothing"}
 
 
 def state(frame: int) -> list[float]:
@@ -69,6 +70,7 @@ def write_dataset(root: Path) -> Path:
                 "timestamp",
                 "observation.state",
                 "task_index",
+                "instruction",
             )
         }
         persistent: list[list[dict[str, Any]]] = []
@@ -81,6 +83,7 @@ def write_dataset(root: Path) -> Path:
                 columns["timestamp"].append(frame / FPS)
                 columns["observation.state"].append(state(frame))
                 columns["task_index"].append(0)
+                columns["instruction"].append(INSTRUCTIONS[episode])
                 persistent.append(rows)
                 index += 1
         table = pa.table(
@@ -91,6 +94,7 @@ def write_dataset(root: Path) -> Path:
                 "timestamp": pa.array(columns["timestamp"], pa.float32()),
                 "observation.state": pa.array(columns["observation.state"], pa.list_(pa.float32())),
                 "task_index": pa.array(columns["task_index"], pa.int64()),
+                "instruction": pa.array(columns["instruction"], pa.string()),
                 # lerobot-annotate lets pyarrow infer these types; do the same.
                 "language_persistent": pa.array(persistent),
                 "language_events": pa.array([[] for _ in persistent]),

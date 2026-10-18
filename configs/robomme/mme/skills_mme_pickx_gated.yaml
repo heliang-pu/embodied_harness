@@ -1,0 +1,75 @@
+# RoboMME's subgoals split into pick / place / press_button, so each can carry a switch gate:
+# the subgoal predictor may move on from a pick only while the gripper holds the cube, and from a
+# place only once it has let go. Everything else is as in skills_mme_pickx.yaml. The gripper
+# widths come from the 100 PickXtimes demos: holding 0.0183, open 0.04.
+version: 1
+library: robomme_mme_simplesg_pickx
+predicates:
+  holding: "0.012 < gripper_width < 0.03"
+  released: "gripper_width > 0.035"
+skills:
+  pick:
+    args:
+      text:
+        type: enum
+        values:
+          - "pick up the red cube for the first time"
+          - "pick up the red cube for the second time"
+          - "pick up the red cube for the third time"
+          - "pick up the red cube for the fourth time"
+          - "pick up the red cube for the fifth time"
+          - "pick up the green cube for the first time"
+          - "pick up the green cube for the second time"
+          - "pick up the green cube for the third time"
+          - "pick up the green cube for the fourth time"
+          - "pick up the green cube for the fifth time"
+          - "pick up the blue cube for the first time"
+          - "pick up the blue cube for the second time"
+          - "pick up the blue cube for the third time"
+          - "pick up the blue cube for the fourth time"
+          - "pick up the blue cube for the fifth time"
+    prompt:
+      "pick up the red cube for the first time": pick_red_1
+      "pick up the red cube for the second time": pick_red_2
+      "pick up the red cube for the third time": pick_red_3
+      "pick up the red cube for the fourth time": pick_red_4
+      "pick up the red cube for the fifth time": pick_red_5
+      "pick up the green cube for the first time": pick_green_1
+      "pick up the green cube for the second time": pick_green_2
+      "pick up the green cube for the third time": pick_green_3
+      "pick up the green cube for the fourth time": pick_green_4
+      "pick up the green cube for the fifth time": pick_green_5
+      "pick up the blue cube for the first time": pick_blue_1
+      "pick up the blue cube for the second time": pick_blue_2
+      "pick up the blue cube for the third time": pick_blue_3
+      "pick up the blue cube for the fourth time": pick_blue_4
+      "pick up the blue cube for the fifth time": pick_blue_5
+    verify:
+      switch_when: [holding]
+    timeout_s: 200
+  place:
+    args:
+      text:
+        type: enum
+        values:
+          - "place the red cube onto the target"
+          - "place the green cube onto the target"
+          - "place the blue cube onto the target"
+    prompt:
+      "place the red cube onto the target": place_red
+      "place the green cube onto the target": place_green
+      "place the blue cube onto the target": place_blue
+    verify:
+      switch_when: [released]
+    timeout_s: 200
+  press_button:
+    args:
+      text:
+        type: enum
+        values:
+          - "press the button to stop"
+    prompt:
+      "press the button to stop": press_button
+    timeout_s: 200
+defaults:
+  on_failure: {escalate: planner}

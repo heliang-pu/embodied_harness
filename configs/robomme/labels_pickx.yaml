@@ -1,0 +1,80 @@
+# Reviewed by rule (scripts/0927_robomme_pickx/review_labels.py): every label matches its subgoal template.
+dataset: /workspace/datasets/fmc3/robomme_pickx_plan_v1
+library: robomme_pickx_v1
+labels:
+- label: place the blue cube onto the target
+  count: 107
+  call: place(color=blue)
+  reviewed: true
+- label: press the button to stop
+  count: 100
+  call: press_button
+  reviewed: true
+- label: place the red cube onto the target
+  count: 83
+  call: place(color=red)
+  reviewed: true
+- label: place the green cube onto the target
+  count: 77
+  call: place(color=green)
+  reviewed: true
+- label: pick up the blue cube for the first time
+  count: 40
+  call: pick(color=blue)
+  reviewed: true
+- label: pick up the red cube for the first time
+  count: 32
+  call: pick(color=red)
+  reviewed: true
+- label: pick up the blue cube for the second time
+  count: 31
+  call: pick(color=blue)
+  reviewed: true
+- label: pick up the green cube for the first time
+  count: 28
+  call: pick(color=green)
+  reviewed: true
+- label: pick up the red cube for the second time
+  count: 26
+  call: pick(color=red)
+  reviewed: true
+- label: pick up the blue cube for the third time
+  count: 23
+  call: pick(color=blue)
+  reviewed: true
+- label: pick up the green cube for the second time
+  count: 20
+  call: pick(color=green)
+  reviewed: true
+- label: pick up the green cube for the third time
+  count: 16
+  call: pick(color=green)
+  reviewed: true
+- label: pick up the red cube for the third time
+  count: 13
+  call: pick(color=red)
+  reviewed: true
+- label: pick up the blue cube for the fourth time
+  count: 9
+  call: pick(color=blue)
+  reviewed: true
+- label: pick up the green cube for the fourth time
+  count: 8
+  call: pick(color=green)
+  reviewed: true
+- label: pick up the red cube for the fourth time
+  count: 8
+  call: pick(color=red)
+  reviewed: true
+- label: pick up the green cube for the fifth time
+  count: 5
+  call: pick(color=green)
+  reviewed: true
+- label: pick up the blue cube for the fifth time
+  count: 4
+  call: pick(color=blue)
+  reviewed: true
+- label: pick up the red cube for the fifth time
+  count: 4
+  call: pick(color=red)
+  reviewed: true

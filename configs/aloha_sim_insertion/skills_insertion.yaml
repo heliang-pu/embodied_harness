@@ -1,0 +1,70 @@
+# Skill vocabulary for the ALOHA sim insertion task. Verifiers read only the grippers (1 open, 0 closed).
+# From the 100 demonstrations: both grippers open to about 0.97 before grasping; holding the socket reads
+# 0.6-0.7 (left), holding the peg 0.26-0.4 (right), closed on nothing about 0.1. Picking takes about 4 s.
+# In closed-loop runs good socket grasps also read 0.80-0.84 (27 of 31 pick_up timeouts held both objects
+# off the table), so holding_socket goes up to 0.88, still well below the open 0.97.
+# Inserting has no proprio signal: the env ends the episode when the peg is in, so insert has no success
+# condition. In the 8 s (400-step) evaluation it starts at about 4.8 s; successful ones took 1.5-3.3 s.
+# A gripper closed on nothing once the arms have reached down (shoulders above -0.6; the start pose is
+# -0.96) is a missed grasp. The policy only ever started a pick from the start pose, so a retry goes home
+# first: go_home opens both grippers and walks the joints back (runtime.primitive_steps).
+# Retries count towards defaults.max_consecutive_failures (3): with one retry the second failure reaches
+# the planner, and a third in a row holds.
+version: 1
+library: aloha_insertion_v1
+predicates:
+  holding_socket: "0.5 < left_gripper < 0.88"
+  holding_peg: "0.15 < right_gripper < 0.5"
+  holding_both: "holding_socket and holding_peg"
+  reached_down: "left_shoulder > -0.6 and right_shoulder > -0.6"
+  missed: "reached_down and (left_gripper < 0.15 or right_gripper < 0.15)"
+  dropped: "left_gripper < 0.3 or right_gripper < 0.12"
+skills:
+  pick_up:
+    prompt: pick_up
+    description: the left arm grasps the blue socket and the right arm the red peg, both at once, and lifts them
+    preconditions: ["not holding_both"]
+    verify:
+      success: [{when: holding_both, hold_s: 0.5}]
+      failure: [{when: missed, hold_s: 0.3, reason: missed_grasp}]
+    min_duration_s: 2.0                  # the grippers pass through the holding range while opening
+    timeout_s: 7                         # verified picks took 3.2-6.6 s
+    effects: {on_success: ["ledger.picked = true"]}
+    on_failure:
+      # A miss shows at about 5 s and go_home takes 1.2 s: one re-pick is all even 16 s leave time for.
+      missed_grasp: {retry: 1, before_retry: [go_home]}
+      # No go_home here: it opens both grippers, and 7 s in there is no time to pick again. The retry keeps
+      # whatever is in hand (home_before_picking_from_nothing goes home only with both hands empty).
+      timeout: {retry: 1}
+  insert:
+    prompt: insert
+    description: the arms bring the red peg and the blue socket together and push the peg into the socket
+    verify:                              # no precondition: the grippers settle for a while after a grasp
+      failure: [{when: dropped, hold_s: 0.3, reason: dropped}]
+    # Every joint still (within 1e-4 rad a step) for 1 s: the policy stopped moving. A stuck insertion (the
+    # peg pressed against the socket) still jitters 2-4e-3 rad a step, which only the timeout catches.
+    stall_s: 1.0
+    timeout_s: 3                         # fits the 8 s episode; successful insertions took 1.5-3.3 s
+                                         # (up to 5 s in 16 s runs: the retry gives 6 s in all)
+    effects: {on_success: ["ledger.inserted = true"]}
+    on_failure:
+      dropped: {escalate: planner, rollback: pick_up}   # the peg slipped out: a plan picks both up again
+                                                        # (home_before_picking_again runs go_home first)
+      # Stalled or stuck: send the prompt again from where the arms are, keeping both grasps; a second
+      # stall or timeout goes to the planner.
+      stall: {retry: 1}
+      timeout: {retry: 1}
+  go_home:
+    description: open both grippers and move back to the start pose
+    executor: scripted
+    timeout_s: 5
+transitions:
+  - name: home_before_picking_again
+    when: "previous.skill == 'insert' and next.skill == 'pick_up'"
+    run: [go_home]
+  - name: home_before_picking_from_nothing   # pick_up again (a retry, or the planner's next try) empty-handed
+    when: "previous.skill == 'pick_up' and next.skill == 'pick_up' and not holding_socket and not holding_peg"
+    run: [go_home]
+defaults:
+  on_failure: {escalate: planner}
+  max_consecutive_failures: 3

@@ -1,0 +1,40 @@
+# ALOHA sim insertion, closed loop: the fine-tuned Qwen3-VL-2B planner (vLLM, insertion-planner) and pi05
+# fine-tuned on the subtask prompts (websocket policy server on 8001) around gym-aloha.
+#   embodied-harness run configs/aloha_sim_insertion/run_insertion.yaml --seed 1000 --episodes 50
+name: aloha_sim_insertion
+task: task_insertion.yaml
+skills: skills_insertion.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion, max_steps: 400}   # 8 s at 50 Hz, the length of the scripted demonstrations
+executor:
+  type: websocket
+  library: library_insertion_v1.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {top: observation.images.top}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 50
+planner:
+  type: openai_compat
+  threaded: false
+  timeout_s: 60
+  trained_library: aloha_insertion_v1
+  params:
+    base_url: http://127.0.0.1:8021/v1
+    model: insertion-planner
+    cameras: [top]
+    image_size: [448, 336]
+    proprio_keys: [left_waist, left_shoulder, left_elbow, left_forearm_roll, left_wrist_angle,
+                   left_wrist_rotate, left_gripper, right_waist, right_shoulder, right_elbow,
+                   right_forearm_roll, right_wrist_angle, right_wrist_rotate, right_gripper]
+    show_progress: true
+    temperature: 0.0
+    request_timeout_s: 60
+runtime:
+  clock: sim
+  control_hz: 50
+  primitive_steps: {go_home: 60}      # 1.2 s: enough to get home from a grasp
+trace:
+  root: runs

@@ -1,0 +1,19 @@
+# Prompt library for ALOHA static coffee (lerobot/aloha_static_coffee), drafted from the dataset's task
+# text before annotation. `data annotate` asks the VLM to use these texts verbatim where they fit;
+# `data library` fills in episodes and durations once the dataset is annotated. The lid steps were added
+# after a trial annotation of episodes 0-1 showed them; those recordings (22 s) end before the buttons.
+library: aloha_coffee_v1
+source: drafted from the task text of lerobot/aloha_static_coffee
+prompts:
+  - id: open_lid
+    text: "open the capsule container lid"
+  - id: place_capsule
+    text: "place the coffee capsule inside the capsule container"
+  - id: close_lid
+    text: "close the capsule container lid"
+  - id: place_cup
+    text: "place the cup onto the center of the cup tray"
+  - id: press_hot_water
+    text: "push the hot water button"
+  - id: press_travel_mug
+    text: "push the travel mug button"

@@ -1,4 +1,4 @@
-# How a LeRobot dataset maps onto the planner's inputs (`fmc3-harness data planner`).
+# How a LeRobot dataset maps onto the planner's inputs (`embodied-harness data planner`).
 # The env adapter on the robot must compute proprio the same way, so training and deployment match.
 state_key: observation.state
 cameras:                           # planner camera (planner.params.cameras) -> dataset image key

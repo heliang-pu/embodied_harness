@@ -1,0 +1,13 @@
+# Shared by the v3 dataset adapter and the OpenPI websocket serving adapter.
+# Targets use slash paths; source features are literal LeRobot v3 keys.
+images:
+  images/cam_high: observation.images.top
+state_key: observation.state
+action_key: action
+task_key: task
+state_target: state
+actions_target: actions
+prompt_target: prompt
+image_layout: chw
+image_input_layout: auto
+subtask_style: subtask

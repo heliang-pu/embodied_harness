@@ -1,0 +1,24 @@
+# A long task in a fixed order: four packages, each picked, flipped and placed, 12 steps. The order is data:
+# the sequence planner plays `plan`, and `embodied-harness report` measures any planner against it.
+task:
+  id: sort_fixed_plan
+  goal: 把桌上的 4 个包裹逐个翻面，依次放进 A、B、C、A 箱
+  skills: [pick, flip, place, retract]
+  expected_total: 4
+  ledger:
+    sorted: {type: counter, keys: [A, B, C]}
+  done_when: "sum(ledger.sorted) == task.expected_total"   # checked at load: false until the last step, true after it
+  budget: {max_time_s: 1800, max_skill_calls: 80, max_planner_calls: 120}
+  plan:
+    - pick
+    - flip
+    - {skill: place, args: {bin: A}}
+    - pick
+    - flip
+    - {skill: place, args: {bin: B}}
+    - pick
+    - flip
+    - {skill: place, args: {bin: C}}
+    - pick
+    - flip
+    - {skill: place, args: {bin: A}}

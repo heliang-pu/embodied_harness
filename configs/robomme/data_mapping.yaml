@@ -1,0 +1,5 @@
+# How the PickXtimes dataset maps onto the planner's inputs (embodied-harness data planner).
+state_key: observation.state
+instruction_key: instruction
+cameras: {front: observation.images.front, wrist: observation.images.wrist}
+proprio: {gripper_width: "state[7]"}

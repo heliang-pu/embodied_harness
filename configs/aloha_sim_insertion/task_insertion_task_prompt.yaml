@@ -1,0 +1,4 @@
+task:
+  id: aloha_sim_insertion_task_prompt
+  goal: "把插销插进插座。"
+  skills: [insert_peg]

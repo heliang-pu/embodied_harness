@@ -3,12 +3,15 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fmc3-harness"
+name = "embodied-harness"
 version = "0.1.0"
-description = "Runtime harness that runs a fine-tuned VLM planner and a VLA executor as one closed loop."
+description = "Embodied Harness: a runtime that runs a VLM planner and robot policy as one closed loop."
 readme = "README.md"
 requires-python = ">=3.10"
+# numpy is a core dependency: the runner and the env adapters import it, so the CLI needs it to start.
+# The extras' other packages (msgpack, websockets, Pillow, pyarrow) are imported only where they are used.
 dependencies = [
+    "numpy>=1.24",
     "pydantic>=2.6",
     "PyYAML>=6.0",
 ]
@@ -21,17 +24,23 @@ planner = [
 ]
 # Exporting lerobot-annotate datasets. Decoding video frames also needs the `lerobot` package.
 data = [
-    "fmc3-harness[planner]",
+    "embodied-harness[planner]",
     "pyarrow>=14",
 ]
+# Websocket policy client and server (openpi protocol).
+policy = [
+    "msgpack>=1.0",
+    "numpy>=1.24",
+    "websockets>=13",
+]
 dev = [
-    "fmc3-harness[data]",
+    "embodied-harness[data,policy]",
     "pytest>=8",
     "ruff>=0.6",
 ]
 
 [project.scripts]
-fmc3-harness = "fmc3_harness.cli:main"
+embodied-harness = "embodied_harness.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

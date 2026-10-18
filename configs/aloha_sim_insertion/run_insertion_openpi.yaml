@@ -1,0 +1,29 @@
+# An OpenPI checkpoint trained for these subtask prompts, served via policy.vla.openpi.
+# The server maps LeRobot-shaped wire inputs to OpenPI's native ALOHA inputs.
+name: aloha_sim_insertion_openpi
+task: task_insertion.yaml
+skills: skills_insertion.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion, max_steps: 400}
+executor:
+  type: websocket
+  library: library_insertion_v1.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {top: observation.images.top}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 16
+    request_timeout_s: 300  # The first JAX inference may compile.
+planner:
+  type: sequence
+  params:
+    calls: [{skill: pick_up}, {skill: insert}]
+runtime:
+  clock: sim
+  control_hz: 50
+  primitive_steps: {go_home: 60}
+trace:
+  root: runs
+  frames: true

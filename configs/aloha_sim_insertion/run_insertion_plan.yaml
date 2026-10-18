@@ -1,0 +1,28 @@
+# run_insertion_seq.yaml as a long task: the sequence planner plays task.plan ([pick_up, insert]), and a drop
+# during insert rolls back to pick_up (skills_insertion.yaml: insert.on_failure.dropped.rollback) after the
+# home_before_picking_again transition runs go_home. 800 steps leave time for one re-grasp.
+#   embodied-harness run configs/aloha_sim_insertion/run_insertion_plan.yaml --seed 1000 --episodes 50
+#   embodied-harness report runs/<run_id>
+name: aloha_sim_insertion_plan
+task: task_insertion.yaml
+skills: skills_insertion.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion, max_steps: 800}
+executor:
+  type: websocket
+  library: library_insertion_v1.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {top: observation.images.top}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 50
+planner:
+  type: sequence                      # no params: it plays task.plan
+runtime:
+  clock: sim
+  control_hz: 50
+  primitive_steps: {go_home: 60}      # 1.2 s: enough to get home from a grasp
+trace:
+  root: runs

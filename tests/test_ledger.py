@@ -1,7 +1,7 @@
 import pytest
 
-from fmc3_harness.config.schema import LedgerField
-from fmc3_harness.memory.ledger import Ledger, LedgerError, LedgerOp
+from embodied_harness.config.schema import LedgerField
+from embodied_harness.core.ledger import Ledger, LedgerError, LedgerOp
 
 FIELDS = {
     "sorted": LedgerField(type="counter", keys=["A", "B"]),

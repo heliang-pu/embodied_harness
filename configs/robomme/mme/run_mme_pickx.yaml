@@ -1,0 +1,39 @@
+# RoboMME's own SimpleSG + QwenVL, run through the harness the way their evaluation runs it:
+# - planner: their fine-tuned Qwen3-VL-4B subgoal predictor (vLLM + LoRA "simple_subgoal"),
+#   asked before every 16-step chunk with the task goal, the subgoal history and the front image;
+# - executor: their symbolic-simple-subgoal pi05 behind their openpi policy server, prompted with
+#   the task goal plus the subgoal, first 16 actions of each chunk;
+# - RoboMME test split, joint-angle actions, at most 1300 steps; run --seed 0 --episodes 50.
+name: robomme_mme_pickx_simplesg
+task: task_mme_pickx.yaml
+skills: skills_mme_pickx.yaml
+env:
+  type: robomme
+  params: {task: PickXtimes, split: test, first_episode: 0, max_steps: 1300}
+executor:
+  type: websocket
+  library: library_pickx_simplesg.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {front: observation/image, wrist: observation/wrist_image}
+    state: {proprio: state, key: observation/state}
+    texts: {prompt: "{goal}", simple_subgoal: "{prompt}", grounded_subgoal: "{prompt}"}
+    n_action_steps: 16
+    request_timeout_s: 300                 # the first call compiles the JAX model
+planner:
+  type: robomme_subgoal
+  call: periodic
+  every_steps: 16
+  threaded: false
+  timeout_s: 120
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: simple_subgoal                  # the LoRA name given to vllm serve --lora-modules
+    camera: front
+runtime:
+  clock: sim
+  control_hz: 10
+trace:
+  root: runs
+  video: true

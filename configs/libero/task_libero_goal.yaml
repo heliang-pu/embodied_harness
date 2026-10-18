@@ -1,0 +1,21 @@
+# LIBERO-Goal long tasks. The run config's env.params.goals picks the tasks and their order; the env's
+# instruction ("put the wine bottle on the rack, then put the cream cheese in the bowl, then ...") is the
+# episode's goal. The env ends the episode once every goal holds, so there is no done_when.
+task:
+  id: libero_goal_chain
+  goal: "按顺序完成指令里的几个子任务。"
+  goal_source: episode
+  rules:
+    - "按指令里的顺序做，一次只做一个子任务。"
+    - "画面里当前子任务的目标已经达成，就换下一个；全部达成时回答完成。"
+  skills:
+    - open_the_middle_drawer_of_the_cabinet
+    - put_the_bowl_on_the_stove
+    - put_the_wine_bottle_on_top_of_the_cabinet
+    - open_the_top_drawer_and_put_the_bowl_inside
+    - put_the_bowl_on_top_of_the_cabinet
+    - push_the_plate_to_the_front_of_the_stove
+    - put_the_cream_cheese_in_the_bowl
+    - turn_on_the_stove
+    - put_the_bowl_on_the_plate
+    - put_the_wine_bottle_on_the_rack

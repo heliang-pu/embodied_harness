@@ -1,0 +1,32 @@
+task:
+  id: robotwin_put_bottles_dustbin_eval
+  goal: Put the yellow bottle, the clear bottle with a blue cap, and the black bottle with a red label
+    into the dustbin.
+  rules:
+  - Do not declare done while the simulator is still running; continue selecting a subgoal from the current RGB observations and joint state until the environment itself terminates.
+  - 'Bottle identity is visual: yellow body with green cap; clear water bottle with blue label/sections
+    and blue/teal cap; dark soda bottle with red label and red cap.'
+  - Choose the next subgoal from the current synchronized camera images and the robot joint state.
+    The order of objects in the goal does not prescribe the pickup order.
+  - Keep object identity through pickup, optional right-to-left handover, and placement. Do not invent
+    an unseen handover.
+  - Use wrist views to assess release into the bin; the head view may crop the bin.
+  - Store only visually observed completion in memory. Dispatched skill history records attempted
+    subgoals, so an attempted pickup or transport is not a completed disposal.
+  - If a bottle is visibly dropped onto the tabletop, use recover_dropped_bottle before resuming
+    the normal handover or placement sequence.
+  - Once recovery succeeds, never call recover_dropped_bottle again; continue with the pending
+    bottle placement or the next unplaced bottle shown by the progress ledger.
+  skills: [pick_bottle, handover_bottle, place_bottle, recover_dropped_bottle]
+  expected_total: 3
+  ledger:
+    recovered: {type: bool, init: false}
+    disposed:
+      type: counter
+      keys: [yellow, clear_blue, black_red]
+  # The simulator ends successful episodes. A model's "done" is refused rather than scored as success.
+  done_when: "False"
+  budget:
+    max_time_s: 45
+    max_skill_calls: 200
+    max_planner_calls: 120

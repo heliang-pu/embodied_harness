@@ -1,9 +1,10 @@
+import numpy as np
 import pytest
 
 from conftest import RUN_CONFIG, make_bundle, small_task
-from fmc3_harness.config.loader import load_bundle
-from fmc3_harness.core.types import OutcomeStatus
-from fmc3_harness.verifiers.session import VerifierSession
+from embodied_harness.config.loader import load_bundle
+from embodied_harness.core.types import OutcomeStatus
+from embodied_harness.runtime.verifier import VerifierSession
 
 
 def namespace(**values):
@@ -107,5 +108,32 @@ def test_stall(tmp_path):
     assert verifier.evaluate(0.0, namespace(), still) is None
     assert verifier.evaluate(0.5, namespace(), still) is None
     assert verifier.evaluate(0.9, namespace(), moved) is None  # the change restarts the stall timer
+    assert verifier.evaluate(1.8, namespace(), moved) is None
+    assert verifier.evaluate(1.9, namespace(), moved).reason == "stall"
+
+
+def test_stall_accepts_unchanged_numpy_state_vectors(tmp_path):
+    bundle = make_bundle(tmp_path, task=small_task(3), skills={"skills": {"pick": {"stall_s": 1.0}}})
+    verifier = VerifierSession(bundle.registry.skill("pick"), started_at=0.0, timeout_s=10.0)
+
+    def observation():
+        return {"gripper_width": 0.09, "state": np.zeros(8, dtype=np.float32)}
+
+    assert verifier.evaluate(0.0, namespace(), observation()) is None
+    assert verifier.evaluate(0.9, namespace(), observation()) is None
+    assert verifier.evaluate(1.0, namespace(), observation()).reason == "stall"
+
+
+def test_a_numpy_state_vector_change_restarts_the_stall_timer(tmp_path):
+    bundle = make_bundle(tmp_path, task=small_task(3), skills={"skills": {"pick": {"stall_s": 1.0}}})
+    verifier = VerifierSession(bundle.registry.skill("pick"), started_at=0.0, timeout_s=10.0)
+    still = {"gripper_width": 0.09, "state": np.zeros(8, dtype=np.float32)}
+    moved_state = np.zeros(8, dtype=np.float32)
+    moved_state[3] = 0.25
+    moved = {"gripper_width": 0.09, "state": moved_state}
+
+    assert verifier.evaluate(0.0, namespace(), still) is None
+    assert verifier.evaluate(0.5, namespace(), still) is None
+    assert verifier.evaluate(0.9, namespace(), moved) is None
     assert verifier.evaluate(1.8, namespace(), moved) is None
     assert verifier.evaluate(1.9, namespace(), moved).reason == "stall"

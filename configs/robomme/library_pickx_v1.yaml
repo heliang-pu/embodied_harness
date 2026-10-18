@@ -1,0 +1,13 @@
+# Prompt library of the pi05 PickXtimes executor. Each text is exactly what the training frames'
+# task was set to (RoboMME subgoals without the repetition count), so the count lives in the
+# planner's memory, not in the prompt.
+library: robomme_pickx_v1
+source: lerobot/robomme episodes 500-599 (PickXtimes)
+prompts:
+  - {id: pick_red, text: "pick up the red cube"}
+  - {id: pick_green, text: "pick up the green cube"}
+  - {id: pick_blue, text: "pick up the blue cube"}
+  - {id: place_red, text: "place the red cube onto the target"}
+  - {id: place_green, text: "place the green cube onto the target"}
+  - {id: place_blue, text: "place the blue cube onto the target"}
+  - {id: press_button, text: "press the button to stop"}

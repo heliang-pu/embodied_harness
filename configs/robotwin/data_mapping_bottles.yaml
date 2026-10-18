@@ -1,0 +1,22 @@
+state_key: observation.state
+instruction_key: null
+cameras:
+  front: observation.images.cam_front
+  head: observation.images.cam_high
+  left_wrist: observation.images.cam_left_wrist
+  right_wrist: observation.images.cam_right_wrist
+proprio:
+  left_waist: "state[0]"
+  left_shoulder: "state[1]"
+  left_elbow: "state[2]"
+  left_forearm_roll: "state[3]"
+  left_wrist_angle: "state[4]"
+  left_wrist_rotate: "state[5]"
+  left_gripper: "state[6]"
+  right_waist: "state[7]"
+  right_shoulder: "state[8]"
+  right_elbow: "state[9]"
+  right_forearm_roll: "state[10]"
+  right_wrist_angle: "state[11]"
+  right_wrist_rotate: "state[12]"
+  right_gripper: "state[13]"

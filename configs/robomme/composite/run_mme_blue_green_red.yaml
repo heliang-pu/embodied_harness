@@ -1,0 +1,43 @@
+# Composed task blue_green_red, planned by RoboMME's own fine-tuned subgoal predictor (Qwen3-VL-4B + LoRA
+# "simple_subgoal"), exactly as in ../mme/run_mme_pickx.yaml: asked before every 16-step chunk, no
+# verifiers. It was trained on PickXtimes instructions with a single color, so this measures how its
+# fine-tuning carries over to a composed instruction. The policy gets the composed instruction and the
+# subgoal, and no go_home is ever run: RoboMME's pipeline as it is. Run with --seed 0 --episodes 24.
+name: composite_mme_blue_green_red
+task: ../mme/task_mme_pickx.yaml
+skills: ../mme/skills_mme_pickx.yaml
+env:
+  type: robomme
+  params:
+    task: PickXtimes
+    split: test
+    difficulty: [medium, hard]             # the 24 test episodes with cubes of all three colors
+    max_steps: 1300
+    composite: [[blue, 1], [green, 1], [red, 1]]
+executor:
+  type: websocket
+  library: ../mme/library_pickx_simplesg.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {front: observation/image, wrist: observation/wrist_image}
+    state: {proprio: state, key: observation/state}
+    texts: {prompt: "{goal}", simple_subgoal: "{prompt}", grounded_subgoal: "{prompt}"}
+    n_action_steps: 16
+    request_timeout_s: 300                 # the first call compiles the JAX model
+planner:
+  type: robomme_subgoal
+  call: periodic
+  every_steps: 16
+  threaded: false
+  timeout_s: 120
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: simple_subgoal                  # the LoRA name given to vllm serve --lora-modules
+    camera: front
+runtime:
+  clock: sim
+  control_hz: 10
+trace:
+  root: runs
+  video: true

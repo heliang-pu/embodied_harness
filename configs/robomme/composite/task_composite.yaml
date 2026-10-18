@@ -1,0 +1,12 @@
+task:
+  id: robomme_pickx_composite
+  goal: 按指令依次把几种颜色的方块放到目标上，再按按钮     # each episode's instruction replaces this
+  goal_source: episode
+  rules:
+    - 抓起一个方块再把它放到目标上，算这种颜色放了一次；按指令里的颜色顺序做，一种颜色放够次数再换下一种
+    - 抓取子目标里的序号（first、second……）是这种颜色在整个任务里第几次被抓起
+    - 每次调用都在记忆里写清楚各颜色已经放了几次、下一步该做什么
+    - 换成另一种颜色之前，先用 go_home 回到初始姿态，再抓新颜色的方块；同一种颜色连续放时不用
+    - 全部放完再按按钮；手里拿着方块时不能按按钮
+  skills: [pick, place, press_button, go_home]
+  budget: {max_skill_calls: 60, max_planner_calls: 200}

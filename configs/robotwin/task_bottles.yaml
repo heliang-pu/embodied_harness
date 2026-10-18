@@ -1,0 +1,28 @@
+task:
+  id: robotwin_put_bottles_dustbin
+  goal: Put the yellow bottle, the clear bottle with a blue cap, and the black bottle
+    with a red label into the dustbin.
+  rules:
+  - 'Bottle identity is visual: yellow body with green cap; clear water bottle with
+    blue label/sections and blue/teal cap; dark soda bottle with red label and red
+    cap.'
+  - The order of objects in the instruction is NOT the demonstrated pickup order.
+    Read the order from the video.
+  - Keep object identity through pickup, optional right-to-left handover and placement.
+  - Use synchronized wrist views to verify release into the bin; head/front views
+    crop the bin. Do not invent an unseen handover.
+  - Remember only previously completed actions. Do not count the current pickup or
+    transport as a completed disposal.
+  skills:
+  - pick_bottle
+  - handover_bottle
+  - place_bottle
+  expected_total: 3
+  ledger:
+    disposed:
+      type: counter
+      keys:
+      - yellow
+      - clear_blue
+      - black_red
+  done_when: sum(ledger.disposed) == task.expected_total

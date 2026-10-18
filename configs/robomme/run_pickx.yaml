@@ -1,0 +1,36 @@
+# RoboMME PickXtimes, closed loop: the fine-tuned Qwen3-VL-2B planner (vLLM) and the pi05
+# executor (websocket policy server) around the RoboMME simulator. Evaluation follows RoboMME:
+# the test split, joint-angle actions, at most 1300 steps; `run --seed 0 --episodes 50`.
+name: robomme_pickx
+task: task_pickx.yaml
+skills: skills_pickx.yaml
+env:
+  type: robomme
+  params: {task: PickXtimes, split: test, first_episode: 0, max_steps: 1300}
+executor:
+  type: websocket
+  library: library_pickx_v1.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {front: observation.images.front, wrist: observation.images.wrist}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 10
+planner:
+  type: openai_compat
+  threaded: false
+  timeout_s: 60
+  trained_library: robomme_pickx_v1
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: vlm-planner
+    cameras: [front, wrist]
+    image_size: [256, 256]
+    proprio_keys: [gripper_width]
+    temperature: 0.0
+    structured_output: response_format
+runtime:
+  clock: sim
+  control_hz: 10
+trace:
+  root: runs

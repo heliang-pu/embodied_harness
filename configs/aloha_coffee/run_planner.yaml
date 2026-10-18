@@ -1,0 +1,35 @@
+# Planner fine-tuning and evaluation for ALOHA static coffee (Qwen3-VL-2B, served by vLLM as
+# coffee-planner). The env is the mock world as a placeholder that names the cameras.
+# The --exclude-episodes list holds the episodes whose annotation disagrees with the frames.
+#   embodied-harness data planner configs/aloha_coffee/run_planner.yaml <annotated dataset> \
+#     --labels configs/aloha_coffee/labels_planner.yaml --mapping configs/aloha_coffee/data_mapping.yaml \
+#     --out <export> --val-fraction 0.2 --frame-offsets 0,10,20 \
+#     --exclude-episodes 2,3,10,15,16,20,21,23,25,28,31,32,37,39,41,43,44,48
+#   python scripts/train_planner_sft.py --model Qwen/Qwen3-VL-2B-Instruct --data <export> --out <ckpt> --lora-rank 16
+#   vllm serve <ckpt> --served-model-name coffee-planner --port 8020 --max-model-len 8192 \
+#     --limit-mm-per-prompt '{"image": 2, "video": 0}'
+#   embodied-harness data eval configs/aloha_coffee/run_planner.yaml <export> --split val
+name: aloha_coffee_planner
+task: task_coffee_planner.yaml
+skills: skills_coffee.yaml
+env:
+  type: mock_sorting
+  params: {cameras: [cam_high, cam_low]}
+executor:
+  type: mock
+  library: library_coffee_v1.yaml
+planner:
+  type: openai_compat
+  trained_library: aloha_coffee_v1
+  params:
+    base_url: http://127.0.0.1:8020/v1
+    model: coffee-planner
+    cameras: [cam_high, cam_low]
+    image_size: [448, 336]
+    # All 14 state values (joints in radians, grippers normalized): state drives the sequence.
+    proprio_keys: [left_waist, left_shoulder, left_elbow, left_forearm_roll, left_wrist_angle,
+                   left_wrist_rotate, left_gripper, right_waist, right_shoulder, right_elbow,
+                   right_forearm_roll, right_wrist_angle, right_wrist_rotate, right_gripper]
+    show_progress: true
+    temperature: 0.0
+    request_timeout_s: 60

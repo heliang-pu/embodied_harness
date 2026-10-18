@@ -1,0 +1,27 @@
+# Same as run_insertion.yaml with a fixed order instead of the VLM planner: pick_up, then insert (a failed
+# step is repeated). It separates the planner's share of the result from the policy's.
+name: aloha_sim_insertion_sequence
+task: task_insertion.yaml
+skills: skills_insertion.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion, max_steps: 400}   # 8 s at 50 Hz, the length of the scripted demonstrations
+executor:
+  type: websocket
+  library: library_insertion_v1.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {top: observation.images.top}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 50
+planner:
+  type: sequence
+  params:
+    calls: [{skill: pick_up}, {skill: insert}]
+runtime:
+  clock: sim
+  control_hz: 50
+  primitive_steps: {go_home: 60}      # 1.2 s: enough to get home from a grasp
+trace:
+  root: runs

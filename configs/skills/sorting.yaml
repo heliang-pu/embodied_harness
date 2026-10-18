@@ -14,7 +14,9 @@ skills:
       success: [{when: holding, hold_s: 0.5}]
       failure: [{when: empty_grasp, hold_s: 0.3}]            # the reason defaults to the predicate name
     on_failure:
-      empty_grasp: {retry: 2, before_retry: [retract]}       # design doc §13
+      # design doc §13. Retries count towards max_consecutive_failures (3): one retry, the second miss goes
+      # to the planner, and a third miss in a row holds. (retry: 2 would hold before the planner is asked.)
+      empty_grasp: {retry: 1, before_retry: [retract]}
       timeout: {escalate: planner}
   flip:
     prompt: flip
@@ -24,7 +26,7 @@ skills:
       success: [{when: holding}]
       failure: [{reason: dropped, when: "not holding", hold_s: 0.3}]
     on_failure:
-      dropped: {escalate: planner}
+      dropped: {escalate: planner, rollback: pick}         # the package fell: a plan redoes its pick
   place:
     args:
       bin: {type: enum, values: [A, B, C]}
@@ -37,7 +39,7 @@ skills:
     effects:
       on_success: ["ledger.sorted[args.bin] += 1"]
   retract:
-    executor: scripted                                       # a harness primitive, not a VLA prompt
+    executor: scripted                                       # a harness primitive, not a policy prompt
     timeout_s: 5
 defaults:
   on_failure: {escalate: planner}

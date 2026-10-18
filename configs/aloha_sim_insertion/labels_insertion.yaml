@@ -1,0 +1,223 @@
+dataset: /Users/puheliang/datasets/aloha/insertion_merged_astra
+library: aloha_insertion_v1
+labels:
+- label: pick up the socket and the peg
+  count: 25
+  call: pick_up
+  reviewed: true
+- label: insert the peg into the socket
+  count: 23
+  call: insert
+  reviewed: true
+- label: move socket and peg toward center
+  count: 2
+  call: null
+  reviewed: true
+- label: adjust grippers around aligned linkage
+  count: 1
+  call: null
+  reviewed: true
+- label: align both arms with colored markers
+  count: 1
+  call: null
+  reviewed: true
+- label: align central linkage between grippers
+  count: 1
+  call: null
+  reviewed: true
+- label: align end effectors around socket and peg
+  count: 1
+  call: insert
+  reviewed: true
+- label: align end-effectors near workspace center
+  count: 1
+  call: null
+  reviewed: true
+- label: align grippers near socket and peg
+  count: 1
+  call: insert
+  reviewed: true
+- label: align peg with socket
+  count: 1
+  call: insert
+  reviewed: true
+- label: align the socket and peg
+  count: 1
+  call: insert
+  reviewed: true
+- label: bring socket and peg together
+  count: 1
+  call: insert
+  reviewed: true
+- label: extend both arms toward center
+  count: 1
+  call: null
+  reviewed: true
+- label: hold arms in extended position
+  count: 1
+  call: null
+  reviewed: true
+- label: move arms inward toward center
+  count: 1
+  call: null
+  reviewed: true
+- label: move grippers toward blue socket and red peg
+  count: 1
+  call: null
+  reviewed: true
+- label: move robot arms toward center
+  count: 1
+  call: null
+  reviewed: true
+- label: move socket and peg together
+  count: 1
+  call: insert
+  reviewed: true
+- label: move the blue socket and red peg closer together
+  count: 1
+  call: insert
+  reviewed: true
+- label: move the socket and peg together
+  count: 1
+  call: insert
+  reviewed: true
+- label: move the socket and peg toward each other
+  count: 1
+  call: insert
+  reviewed: true
+- label: position arms around socket and peg
+  count: 1
+  call: null
+  reviewed: true
+- label: reorient right arm near center
+  count: 1
+  call: null
+  reviewed: true
+- label: reposition arms around center
+  count: 1
+  call: null
+  reviewed: true
+- label: reposition arms around central area
+  count: 1
+  call: null
+  reviewed: true
+- label: reposition arms toward center
+  count: 1
+  call: null
+  reviewed: true
+- label: reposition the elongated assembly
+  count: 1
+  call: null
+  reviewed: true
+- label: sweep right arm toward center
+  count: 1
+  call: null
+  reviewed: true
+- label: adjust arms around blue and red markers
+  count: 0
+  call: null
+  reviewed: true
+- label: align arms horizontally
+  count: 0
+  call: null
+  reviewed: true
+- label: align component with central fixture
+  count: 0
+  call: insert
+  reviewed: true
+- label: align end-effector assembly with blue and red markers
+  count: 0
+  call: insert
+  reviewed: true
+- label: align peg and socket horizontally
+  count: 0
+  call: insert
+  reviewed: true
+- label: align the blue piece with the red piece
+  count: 0
+  call: insert
+  reviewed: true
+- label: align the socket and the peg
+  count: 0
+  call: insert
+  reviewed: true
+- label: bring blue piece toward red piece
+  count: 0
+  call: insert
+  reviewed: true
+- label: bring colored parts together
+  count: 0
+  call: null
+  reviewed: true
+- label: bring end effectors together near center
+  count: 0
+  call: null
+  reviewed: true
+- label: extend arms outward in opposite directions
+  count: 0
+  call: null
+  reviewed: true
+- label: move arm assemblies toward center
+  count: 0
+  call: null
+  reviewed: true
+- label: move arms inward and realign at center
+  count: 0
+  call: null
+  reviewed: true
+- label: move arms toward central pieces
+  count: 0
+  call: null
+  reviewed: true
+- label: move central assembly forward
+  count: 0
+  call: null
+  reviewed: true
+- label: move central component toward marked area
+  count: 0
+  call: null
+  reviewed: true
+- label: move end effectors toward colored parts
+  count: 0
+  call: null
+  reviewed: true
+- label: move end-effectors inward toward blue and red markers
+  count: 0
+  call: null
+  reviewed: true
+- label: reorient arms around socket and peg
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition arms around socket and peg
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition arms into nearly horizontal configuration near central markers
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition articulated arms
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition grippers around peg and socket
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition the arms around the blue and red pieces
+  count: 0
+  call: null
+  reviewed: true
+- label: reposition the robot arms toward center
+  count: 0
+  call: null
+  reviewed: true
+- label: shift arms outward around central assembly
+  count: 0
+  call: null
+  reviewed: true
+- label: sweep and extend arms toward center
+  count: 0
+  call: null
+  reviewed: true

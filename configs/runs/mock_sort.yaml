@@ -1,4 +1,4 @@
-# M0 closed loop: symbolic sorting world + mock VLA + oracle planner. No model, no robot.
+# M0 closed loop: symbolic sorting world + mock policy + oracle planner. No model, no robot.
 name: mock_sort
 task: ../tasks/sort_by_size.yaml
 skills: ../skills/sorting.yaml

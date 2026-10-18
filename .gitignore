@@ -5,3 +5,19 @@ __pycache__/
 # Episode traces (trace.root) and data exports, written under the directory you run from.
 /runs/
 /exports/
+# Trained model checkpoints and planner evaluation artifacts.
+/outputs/
+# Local environments, credentials, and machine-specific configuration.
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+!.env.sample
+*.local.yaml
+*.local.yml
+# macOS metadata and generated presentation artifacts.
+.DS_Store
+/.codex-finalizer/
+/.ppt_build/
+/ppt_output/

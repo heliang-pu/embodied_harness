@@ -1,0 +1,13 @@
+# The planner's task for ALOHA static coffee: two coarse steps. The annotation splits the capsule part
+# (pick it, open the lid, put it in, close the lid) and the cup part (pick it, put it down) at a varying
+# granularity, so the label map folds every piece into these two calls and consecutive pieces merge
+# into one planner step. The recordings stop before any button is pushed, so the goal names only the two
+# steps the data shows (the dataset's own task string also asks for the buttons).
+task:
+  id: aloha_coffee_planner
+  goal: "把咖啡胶囊放进胶囊仓，再把杯子放到杯托中央。"
+  skills: [place_capsule, place_cup]
+  ledger:
+    capsule_placed: {type: bool}
+    cup_placed: {type: bool}
+  done_when: "ledger.capsule_placed and ledger.cup_placed"

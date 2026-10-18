@@ -1,0 +1,11 @@
+# Prompt library for the ALOHA sim insertion task (gym-aloha AlohaInsertion-v0; lerobot/aloha_sim_insertion_*).
+# Both arms move at once in the demonstrations: the left one takes the socket and the right one the peg,
+# so picking is one step. `data annotate` asks the VLM to use these texts verbatim; `data library` fills in
+# episodes and durations once the dataset is annotated.
+library: aloha_insertion_v1
+source: drafted from the task text of lerobot/aloha_sim_insertion_scripted
+prompts:
+  - id: pick_up
+    text: "pick up the socket and the peg"
+  - id: insert
+    text: "insert the peg into the socket"

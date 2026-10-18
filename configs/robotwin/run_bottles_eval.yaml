@@ -1,0 +1,82 @@
+# Real RoboTwin smoke evaluation. Forward the model servers to these loopback ports first.
+# The VLM changes subgoals from RGB plus joint state every 16 actions; a fixed action budget never
+# marks a skill as successful. Only RoboTwin's terminal verdict is counted by score_robotwin_eval.py.
+# Planner receives the same four views as its training data; π0.5 receives the three views in its checkpoint.
+name: robotwin_bottles_eval
+task: task_bottles_eval.yaml
+skills: skills_bottles_eval.yaml
+env:
+  type: robotwin
+  params:
+    task: put_bottles_dustbin
+    episode_length: 1200
+    backend: native
+    camera_names: [front_camera, head_camera, left_camera, right_camera]
+    # Set the native RoboTwin source path in a gitignored *.local.yaml copy.
+    root: /path/to/RoboTwin
+executor:
+  type: websocket
+  library: library_bottles_v2.yaml
+  handoff: hard
+  params:
+    protocol: openpi
+    url: ws://127.0.0.1:8011
+    images:
+      head: observation.images.base_0_rgb
+      left_wrist: observation.images.left_wrist_0_rgb
+      right_wrist: observation.images.right_wrist_0_rgb
+    state: {proprio: state, key: observation.state}
+    prompt_key: prompt
+    n_action_steps: 16
+    request_timeout_s: 120
+    handover_release: true
+planner:
+  type: openai_compat
+  trained_library: robotwin_bottles_objects_v2
+  call: periodic
+  done_policy: continue
+  allow_done: false
+  max_resamples: 5
+  every_steps: 16
+  threaded: false
+  timeout_s: 120
+  params:
+    base_url: http://127.0.0.1:8012/v1
+    model: robotwin-bottles-planner
+    cameras: [front, head, left_wrist, right_wrist]
+    image_size: [448, 336]
+    proprio_keys:
+    - left_waist
+    - left_shoulder
+    - left_elbow
+    - left_forearm_roll
+    - left_wrist_angle
+    - left_wrist_rotate
+    - left_gripper
+    - right_waist
+    - right_shoulder
+    - right_elbow
+    - right_forearm_roll
+    - right_wrist_angle
+    - right_wrist_rotate
+    - right_gripper
+    temperature: 0
+    max_tokens: 256
+    request_timeout_s: 120
+    structured_output: response_format
+    show_history: true
+    show_rejections: true
+    show_progress: true
+    progress_fields: [disposed, recovered]
+runtime:
+  clock: sim
+  control_hz: 30
+  # Held-out scenes: without --seed (or a suite entry's seed) the episodes run RoboTwin seeds 1000, 1001, ...
+  # (the smoke runs' range). env.params.episode_index only seeds a reset that gets no seed.
+  # The 50 training demonstrations were recorded with seeds 0-79 (episode_seeds in the conversion manifest).
+  seed: 1000
+trace:
+  root: runs/robotwin_bottles_eval
+  video: true
+  video_fps: 30
+  frames: true

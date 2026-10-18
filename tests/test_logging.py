@@ -1,9 +1,9 @@
 import json
 import logging
 
-from fmc3_harness.logs.codes import ErrorCode
-from fmc3_harness.logs.context import clear_context, scoped_context, update_context
-from fmc3_harness.logs.setup import (
+from embodied_harness.runtime.logs.codes import ErrorCode
+from embodied_harness.runtime.logs.context import clear_context, scoped_context, update_context
+from embodied_harness.runtime.logs.setup import (
     ROOT_LOGGER,
     ConsoleFormatter,
     close_file_log,
@@ -43,7 +43,7 @@ def test_configure_logging_is_idempotent():
     try:
         configure_logging("WARNING")
         configure_logging("INFO")
-        consoles = [h for h in logger.handlers if getattr(h, "fmc3_console", False)]
+        consoles = [h for h in logger.handlers if getattr(h, "embodied_harness_console", False)]
         assert len(consoles) == 1
         assert consoles[0].level == logging.INFO
     finally:

@@ -1,0 +1,27 @@
+# Prompt library for LIBERO-Goal: the suite's ten instructions, word for word as in the LIBERO training data
+# (physical-intelligence/libero for OpenPI's pi05_libero, HuggingFaceVLA/libero for LeRobot's LIBERO
+# checkpoints). All ten tasks start from the same kitchen, so a long task strings several of them together.
+# Prompt ids are the LIBERO task names, which the libero env's `goals` use too.
+library: libero_goal_v1
+source: LIBERO-Goal task instructions (physical-intelligence/libero, HuggingFaceVLA/libero)
+prompts:
+  - id: open_the_middle_drawer_of_the_cabinet
+    text: "open the middle drawer of the cabinet"
+  - id: put_the_bowl_on_the_stove
+    text: "put the bowl on the stove"
+  - id: put_the_wine_bottle_on_top_of_the_cabinet
+    text: "put the wine bottle on top of the cabinet"
+  - id: open_the_top_drawer_and_put_the_bowl_inside
+    text: "open the top drawer and put the bowl inside"
+  - id: put_the_bowl_on_top_of_the_cabinet
+    text: "put the bowl on top of the cabinet"
+  - id: push_the_plate_to_the_front_of_the_stove
+    text: "push the plate to the front of the stove"
+  - id: put_the_cream_cheese_in_the_bowl
+    text: "put the cream cheese in the bowl"
+  - id: turn_on_the_stove
+    text: "turn on the stove"
+  - id: put_the_bowl_on_the_plate
+    text: "put the bowl on the plate"
+  - id: put_the_wine_bottle_on_the_rack
+    text: "put the wine bottle on the rack"

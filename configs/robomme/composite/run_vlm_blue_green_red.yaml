@@ -1,0 +1,49 @@
+# Composed task blue_green_red, planned zero-shot: Qwen3-VL-4B-Instruct without any fine-tuning (the base model
+# vLLM serves next to RoboMME's LoRA), asked only when the gripper says a skill has ended. It sees both
+# cameras, the gripper width, the steps dispatched so far, why it is asked and the memory it wrote last
+# time, and answers with one of the skills' subgoal texts (constrained decoding) plus new memory.
+# Run with --seed 0 --episodes 24.
+name: composite_vlm_blue_green_red
+task: task_composite.yaml
+skills: skills_composite.yaml
+env:
+  type: robomme
+  params:
+    task: PickXtimes
+    split: test
+    difficulty: [medium, hard]             # the 24 test episodes with cubes of all three colors
+    max_steps: 1300
+    composite: [[blue, 1], [green, 1], [red, 1]]
+executor:
+  type: websocket
+  library: ../mme/library_pickx_simplesg.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8001
+    images: {front: observation/image, wrist: observation/wrist_image}
+    state: {proprio: state, key: observation/state}
+    # The policy only hears the current subgoal, also in place of the task goal: given the composed
+    # instruction it goes for the first color it names. The planner keeps track of the whole task.
+    texts: {prompt: "{prompt}", simple_subgoal: "{prompt}", grounded_subgoal: "{prompt}"}
+    n_action_steps: 16
+    request_timeout_s: 300                 # the first call compiles the JAX model
+planner:
+  type: openai_compat
+  threaded: false
+  timeout_s: 60
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: qwen3-vl-4b                     # vllm serve --served-model-name: the base model, no LoRA
+    cameras: [front, wrist]
+    proprio_keys: [gripper_width]
+    temperature: 0.0
+    resample_temperature: 0.7
+    structured_output: response_format
+    show_history: true                     # list the steps so far and why it is asked: it has no fine-tuning
+runtime:
+  clock: sim
+  control_hz: 10
+  primitive_steps: {go_home: 30}
+trace:
+  root: runs
+  video: true

@@ -1,0 +1,23 @@
+library: robotwin_bottles_objects_v2
+source: Object-specific visual annotation vocabulary for RoboTwin put_bottles_dustbin
+prompts:
+- id: pick_yellow
+  text: pick up the yellow bottle
+- id: pick_clear_blue
+  text: pick up the clear bottle with a blue cap
+- id: pick_black_red
+  text: pick up the black bottle with a red label
+- id: handover_yellow
+  text: hand the yellow bottle to the left arm
+- id: handover_clear_blue
+  text: hand the clear bottle with a blue cap to the left arm
+- id: handover_black_red
+  text: hand the black bottle with a red label to the left arm
+- id: place_yellow
+  text: place the yellow bottle into the dustbin
+- id: place_clear_blue
+  text: place the clear bottle with a blue cap into the dustbin
+- id: place_black_red
+  text: place the black bottle with a red label into the dustbin
+- id: recover_yellow
+  text: recover the dropped yellow bottle from the table with the left gripper

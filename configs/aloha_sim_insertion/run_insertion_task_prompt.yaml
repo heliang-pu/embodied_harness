@@ -1,0 +1,26 @@
+# Baseline without subtasks: pi05 fine-tuned on the dataset's own task text (websocket policy server on
+# 8002) runs the whole task from one prompt, the way LeRobot evaluates it.
+name: aloha_sim_insertion_task_prompt
+task: task_insertion_task_prompt.yaml
+skills: skills_insertion_task_prompt.yaml
+env:
+  type: aloha_sim
+  params: {task: insertion, max_steps: 400}   # 8 s at 50 Hz, the length of the scripted demonstrations
+executor:
+  type: websocket
+  library: library_insertion_task_prompt.yaml
+  handoff: hard
+  params:
+    url: ws://127.0.0.1:8002
+    images: {top: observation.images.top}
+    state: {proprio: state, key: observation.state}
+    n_action_steps: 50
+planner:
+  type: sequence
+  params:
+    calls: [{skill: insert_peg}]
+runtime:
+  clock: sim
+  control_hz: 50
+trace:
+  root: runs

@@ -1,0 +1,29 @@
+# A long fixed-order task in the mock world: the sequence planner plays task.plan (12 steps). Empty grasps
+# are retried locally after a retract; a drop during a flip rolls the plan back to that package's pick
+# (skills/sorting.yaml: flip.on_failure.dropped.rollback). No model, no robot.
+#   embodied-harness run configs/runs/mock_sort_plan.yaml --episodes 20 --seed 0 --hold-policy abort
+#   embodied-harness report runs/<run_id>
+name: mock_sort_plan
+task: ../tasks/sort_fixed_plan.yaml
+skills: ../skills/sorting.yaml
+env:
+  type: mock_sorting
+  params:
+    num_packages: 4
+    barcode_down_prob: 1.0          # every package needs its flip
+    fault_probs:
+      pick_next: {empty_grasp: 0.1}
+      flip: {dropped: 0.15}
+executor:
+  type: mock
+  library: ../libraries/mock_sort_v1.yaml
+  handoff: finish_chunk
+  params: {chunk_size: 5}
+planner:
+  type: sequence                    # no params: it plays task.plan
+runtime:
+  clock: sim
+  control_hz: 10
+  primitive_steps: {retract: 5}
+trace:
+  root: runs

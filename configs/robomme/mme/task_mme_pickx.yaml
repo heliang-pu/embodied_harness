@@ -1,0 +1,6 @@
+task:
+  id: robomme_pickxtimes
+  goal: RoboMME PickXtimes                # each episode's instruction replaces this
+  goal_source: episode
+  skills: [subgoal]
+  budget: {max_skill_calls: 60, max_planner_calls: 200}   # asked every 16 of at most 1300 steps

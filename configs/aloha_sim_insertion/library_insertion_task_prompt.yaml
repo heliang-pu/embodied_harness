@@ -1,0 +1,6 @@
+# The single prompt of pi05 fine-tuned without subtasks: the task text of lerobot/aloha_sim_insertion_scripted.
+library: aloha_insertion_task_prompt
+source: task text of lerobot/aloha_sim_insertion_scripted
+prompts:
+  - id: insert_peg
+    text: "Insert the peg into the socket."

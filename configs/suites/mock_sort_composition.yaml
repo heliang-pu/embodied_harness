@@ -1,0 +1,42 @@
+# A composition benchmark over the mock sorting world, with RoboHiMan's four task types:
+# A atomic, AP atomic + perturbations, C composition, CP composition + perturbations.
+# `split` says whether the composition was in the training data. The mock oracle succeeds everywhere;
+# point `config` at a run config with the real planner and policy (or the sequence planner, to
+# measure only the executor and the transitions) to benchmark them.
+#   embodied-harness suite run configs/suites/mock_sort_composition.yaml
+suite: mock_sort_composition
+root: runs/suites
+entries:
+  - name: one_package
+    config: ../runs/mock_sort.yaml
+    category: A
+    split: seen
+    episodes: 3
+    overrides:
+      env: {params: {num_packages: 1, barcode_down_prob: 0.0, fault_probs: {pick_next: {empty_grasp: 0.0}, flip: {dropped: 0.0}}}}
+    task_overrides: {expected_total: 1}
+  - name: one_package_faults
+    config: ../runs/mock_sort.yaml
+    category: AP
+    split: seen
+    episodes: 3
+    overrides:
+      env: {params: {num_packages: 1, barcode_down_prob: 0.0, fault_probs: {pick_next: {empty_grasp: 0.3}}}}
+    task_overrides: {expected_total: 1}
+  - name: three_packages_flip
+    config: ../runs/mock_sort.yaml
+    category: C
+    split: unseen
+    episodes: 3
+    note: flips between picks and places, an order the one-package entries never needed
+    overrides:
+      env: {params: {num_packages: 3, barcode_down_prob: 0.5, fault_probs: {pick_next: {empty_grasp: 0.0}, flip: {dropped: 0.0}}}}
+    task_overrides: {expected_total: 3}
+  - name: three_packages_flip_faults
+    config: ../runs/mock_sort.yaml
+    category: CP
+    split: unseen
+    episodes: 3
+    overrides:
+      env: {params: {num_packages: 3, barcode_down_prob: 0.5}}
+    task_overrides: {expected_total: 3}

@@ -1,0 +1,21 @@
+# Data tools (annotate, labels, library, coverage, planner export) for lerobot/aloha_static_coffee.
+# There is no ALOHA env adapter yet: the env is the mock world as a placeholder that names the cameras.
+#   embodied-harness data annotate configs/aloha_coffee/run_data.yaml <dataset> --out <annotated> \
+#     --vlm-api openai --vlm-model gpt-6-astra --camera observation.images.cam_high --episodes 0,1
+name: aloha_coffee_data
+task: task_coffee.yaml
+skills: skills_coffee.yaml
+env:
+  type: mock_sorting
+  params: {cameras: [cam_high, cam_left_wrist, cam_right_wrist]}
+executor:
+  type: mock
+  library: library_coffee_v1.yaml
+planner:
+  type: openai_compat
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: vlm-planner
+    cameras: [cam_high, cam_left_wrist, cam_right_wrist]
+    image_size: [448, 336]
+    proprio_keys: [left_gripper, right_gripper]

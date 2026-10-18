@@ -1,0 +1,46 @@
+# Offline annotation/export only.
+name: robotwin_bottles_data
+task: task_bottles.yaml
+skills: skills_bottles.yaml
+env:
+  type: mock_sorting
+  params:
+    cameras:
+    - front
+    - head
+    - left_wrist
+    - right_wrist
+executor:
+  type: mock
+  library: library_bottles_v2.yaml
+planner:
+  type: openai_compat
+  trained_library: robotwin_bottles_objects_v2
+  params:
+    base_url: http://127.0.0.1:8000/v1
+    model: robotwin-bottles-planner
+    cameras:
+    - front
+    - head
+    - left_wrist
+    - right_wrist
+    image_size:
+    - 448
+    - 336
+    proprio_keys:
+    - left_waist
+    - left_shoulder
+    - left_elbow
+    - left_forearm_roll
+    - left_wrist_angle
+    - left_wrist_rotate
+    - left_gripper
+    - right_waist
+    - right_shoulder
+    - right_elbow
+    - right_forearm_roll
+    - right_wrist_angle
+    - right_wrist_rotate
+    - right_gripper
+    show_progress: true
+    show_history: true

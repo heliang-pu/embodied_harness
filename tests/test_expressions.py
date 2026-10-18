@@ -1,7 +1,7 @@
 import pytest
 
-from fmc3_harness.memory.ledger import LedgerOp
-from fmc3_harness.skills.expressions import ExpressionError, compile_expression, compile_statement
+from embodied_harness.config.expressions import ExpressionError, compile_expression, compile_statement
+from embodied_harness.core.ledger import LedgerOp
 
 
 @pytest.mark.parametrize(

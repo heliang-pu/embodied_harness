@@ -1,0 +1,53 @@
+# One skill whose argument is the subgoal text: RoboMME's subgoal predictor names a subgoal and the
+# harness sends exactly that text to the policy. No verifiers: as in RoboMME, the predictor alone
+# decides when to move on (planner.call: periodic in the run config).
+version: 1
+library: robomme_mme_simplesg_pickx
+skills:
+  subgoal:
+    args:
+      text:
+        type: enum
+        values:
+          - "pick up the red cube for the first time"
+          - "pick up the red cube for the second time"
+          - "pick up the red cube for the third time"
+          - "pick up the red cube for the fourth time"
+          - "pick up the red cube for the fifth time"
+          - "pick up the green cube for the first time"
+          - "pick up the green cube for the second time"
+          - "pick up the green cube for the third time"
+          - "pick up the green cube for the fourth time"
+          - "pick up the green cube for the fifth time"
+          - "pick up the blue cube for the first time"
+          - "pick up the blue cube for the second time"
+          - "pick up the blue cube for the third time"
+          - "pick up the blue cube for the fourth time"
+          - "pick up the blue cube for the fifth time"
+          - "place the red cube onto the target"
+          - "place the green cube onto the target"
+          - "place the blue cube onto the target"
+          - "press the button to stop"
+    prompt:
+      "pick up the red cube for the first time": pick_red_1
+      "pick up the red cube for the second time": pick_red_2
+      "pick up the red cube for the third time": pick_red_3
+      "pick up the red cube for the fourth time": pick_red_4
+      "pick up the red cube for the fifth time": pick_red_5
+      "pick up the green cube for the first time": pick_green_1
+      "pick up the green cube for the second time": pick_green_2
+      "pick up the green cube for the third time": pick_green_3
+      "pick up the green cube for the fourth time": pick_green_4
+      "pick up the green cube for the fifth time": pick_green_5
+      "pick up the blue cube for the first time": pick_blue_1
+      "pick up the blue cube for the second time": pick_blue_2
+      "pick up the blue cube for the third time": pick_blue_3
+      "pick up the blue cube for the fourth time": pick_blue_4
+      "pick up the blue cube for the fifth time": pick_blue_5
+      "place the red cube onto the target": place_red
+      "place the green cube onto the target": place_green
+      "place the blue cube onto the target": place_blue
+      "press the button to stop": press_button
+    timeout_s: 200                     # longer than an episode: only the predictor switches
+defaults:
+  on_failure: {escalate: planner}

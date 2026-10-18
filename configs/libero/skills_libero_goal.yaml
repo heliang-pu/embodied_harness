@@ -1,0 +1,62 @@
+# Skill vocabulary for LIBERO-Goal long tasks: one skill per LIBERO-Goal task, run by a LIBERO policy from its
+# instruction. No proprio signal says a goal is done (whether the bowl is on the plate shows only in the
+# images), so a skill ends when the planner moves on (planner.call: periodic; the libero_oracle planner does
+# when the simulator says the goal holds) or at its timeout: 15 s, the step budget LIBERO's evaluations give
+# one LIBERO-Goal task (300 steps at 20 Hz). A timeout goes to the planner, which may ask for the same goal
+# again; a second failure in a row holds.
+# The policies only ever started a task from the start pose, so every call after the first goes home first
+# (home_before_each_call): go_home opens the gripper where the arm is, then moves back to the start pose.
+version: 1
+library: libero_goal_v1
+skills:
+  open_the_middle_drawer_of_the_cabinet:
+    prompt: open_the_middle_drawer_of_the_cabinet
+    description: pull the middle drawer of the wooden cabinet open
+    timeout_s: 15
+  put_the_bowl_on_the_stove:
+    prompt: put_the_bowl_on_the_stove
+    description: put the black bowl on the cooking plate of the stove
+    timeout_s: 15
+  put_the_wine_bottle_on_top_of_the_cabinet:
+    prompt: put_the_wine_bottle_on_top_of_the_cabinet
+    description: stand the wine bottle on the top of the wooden cabinet
+    timeout_s: 15
+  open_the_top_drawer_and_put_the_bowl_inside:
+    prompt: open_the_top_drawer_and_put_the_bowl_inside
+    description: open the top drawer of the wooden cabinet and put the black bowl in it
+    timeout_s: 15
+  put_the_bowl_on_top_of_the_cabinet:
+    prompt: put_the_bowl_on_top_of_the_cabinet
+    description: put the black bowl on the top of the wooden cabinet
+    timeout_s: 15
+  push_the_plate_to_the_front_of_the_stove:
+    prompt: push_the_plate_to_the_front_of_the_stove
+    description: push the plate across the table until it is in front of the stove
+    timeout_s: 15
+  put_the_cream_cheese_in_the_bowl:
+    prompt: put_the_cream_cheese_in_the_bowl
+    description: put the cream cheese box into the black bowl
+    timeout_s: 15
+  turn_on_the_stove:
+    prompt: turn_on_the_stove
+    description: turn the stove's knob to switch it on
+    timeout_s: 15
+  put_the_bowl_on_the_plate:
+    prompt: put_the_bowl_on_the_plate
+    description: put the black bowl on the plate
+    timeout_s: 15
+  put_the_wine_bottle_on_the_rack:
+    prompt: put_the_wine_bottle_on_the_rack
+    description: put the wine bottle on the wine rack
+    timeout_s: 15
+  go_home:
+    description: open the gripper, then move back to the start pose
+    executor: scripted
+    timeout_s: 10
+transitions:
+  - name: home_before_each_call
+    when: "previous.skill != null"
+    run: [go_home]
+defaults:
+  on_failure: {escalate: planner}
+  max_consecutive_failures: 2

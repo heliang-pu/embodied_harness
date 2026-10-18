@@ -1,0 +1,53 @@
+version: 1
+library: robotwin_bottles_objects_v2
+skills:
+  pick_bottle:
+    args:
+      bottle:
+        type: enum
+        values:
+        - yellow
+        - clear_blue
+        - black_red
+    prompt:
+      yellow: pick_yellow
+      clear_blue: pick_clear_blue
+      black_red: pick_black_red
+    description: Approach, grasp and lift the specified bottle from the tabletop;
+      include reaching and lifting in one segment.
+  handover_bottle:
+    args:
+      bottle:
+        type: enum
+        values:
+        - yellow
+        - clear_blue
+        - black_red
+    prompt:
+      yellow: handover_yellow
+      clear_blue: handover_clear_blue
+      black_red: handover_black_red
+    description: Move the specified bottle held by the robot right arm to the handover
+      pose, let the robot left gripper take it and release the right gripper. Include
+      only actual visible handovers.
+  place_bottle:
+    args:
+      bottle:
+        type: enum
+        values:
+        - yellow
+        - clear_blue
+        - black_red
+    prompt:
+      yellow: place_yellow
+      clear_blue: place_clear_blue
+      black_red: place_black_red
+    description: Transport the specified bottle with the robot left gripper to the
+      left-side dustbin and release it inside. Use the left-wrist view to confirm
+      the release; head/front views crop the bin.
+    effects:
+      on_success:
+      - ledger.disposed[args.bottle] = 1
+defaults:
+  on_failure:
+    escalate: planner
